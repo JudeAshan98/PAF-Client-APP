@@ -1,4 +1,4 @@
-package model;
+package com;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -29,14 +29,14 @@ public class Appointment {
 	}
 
 	// Inserting Appointment
-	public String insertAppoinment(String date, String time, String hosId, String patId, String doctorID, String payId) {
+	public String insertAppoinment(String date, String time, String hosId, String patId, String doctorID) {
 		String output = "";
 		try {
 			Connection con = connect();
 			if (con == null) {
 				return "Error while connecting to the database for inserting.";
 			}
-			String query = "INSERT INTO appointment (`date`, `time`, `hospitalID`, `patientID`, `doctorID`,`paymentID`)  VALUES (?, ?, ?, ?, ?, ?)";
+			String query = "INSERT INTO appointment (`date`, `time`, `hospitalID`, `patientID`, `doctorID`)  VALUES (?, ?, ?, ?, ?)";
 			PreparedStatement preparedStmt = con.prepareStatement(query);
 
 			preparedStmt.setString(1, date);
@@ -44,14 +44,18 @@ public class Appointment {
 			preparedStmt.setInt(3,Integer.parseInt( hosId));
 			preparedStmt.setInt(4, Integer.parseInt(patId));
 			preparedStmt.setInt(5, Integer.parseInt(doctorID));
-			preparedStmt.setInt(6, Integer.parseInt(payId));
 
 			preparedStmt.execute();
 			con.close();
-			output = "Inserted successfully";
+			
+			//Added with DC - Engine 
+			String newApp = GetAllAppoinments();
+			output = "{\"status\":\"success\", \"data\": \"" + 
+					newApp + "\"}";
 
 		} catch (Exception e) {
-			output = "Error while inserting the Appoinment.";
+			output = "{\"status\":\"error\",\"data\":\"Error While instering Appointment.\"}";
+			//	output = "Error while inserting the Appoinment.";
 			System.err.println(e.getMessage());
 		}
 		return output;
@@ -67,8 +71,8 @@ public class Appointment {
 				return "Error while connecting to the database for GetAll Appointments.";
 			}
 
-			output = "<table border=\"1\"><tr><th>Appointment ID</th><th>Date</th><th>Time</th><th>hospitalID</th>"
-					+ "<th>patientID</th><th>doctorID</th><th>paymentID </th><th>Status</th></tr>";
+			output = "<table class='table table-hover'><thead class='thead-dark'><tr><th>Appointment ID</th><th>Date</th><th>Time</th><th>hospitalID</th>"
+					+ "<th>patientID</th><th>doctorID</th><th>paymentID </th><th>Status</th></tr></thead>";
 			String query = "select * from appointment";
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
@@ -78,7 +82,7 @@ public class Appointment {
 			// preparedStmt.execute();
 
 			while (rs.next()) {
-				String AppID = Integer.toString(rs.getInt("appointmentID"));
+				String AppointmentID = Integer.toString(rs.getInt("appointmentID"));
 				String date = rs.getString("date");
 				String time = rs.getString("time");
 				String hospitalID = Integer.toString(rs.getInt("hospitalID"));
@@ -87,7 +91,7 @@ public class Appointment {
 				String paymentID = Integer.toString(rs.getInt("paymentID"));
 				String Status = rs.getString("appointmentStatus");
 
-				output += "<tr><td>" + AppID + "</td>";
+				output += "<tr><td><input type='text' id='hidAppointmentID' name='hidAppointmentID' value='" + AppointmentID +"' readonly>"+ "</td>";
 				output += "<td>" + date + "</td>";
 				output += "<td>" + time + "</td>";
 				output += "<td>" + hospitalID + "</td>";
@@ -95,6 +99,9 @@ public class Appointment {
 				output += "<td>" + doctorID + "</td>";
 				output += "<td>" + paymentID + "</td>";
 				output += "<td>" + Status + "</td>";
+				
+				
+				output += "<td><input name='btnUpdate' type='button' value='Update' class='btn btn-warning btnUpdate'></td> <td><input name='btnRemove' type='button' value='Remove'class='btnRemove btn btn-danger' data-appointment='" + AppointmentID + "'>" + "</td></tr>";
 			}
 
 			con.close();
@@ -117,7 +124,7 @@ public class Appointment {
 					return "Error while connecting to the database for Get Appointments.";
 				}
 
-				output = "<table border=\"1\"><tr><th>Appointment ID</th><th>Date</th><th>Time</th><th>hospitalID</th>"
+				output = "<table border=\1\'><tr><th>Appointment ID</th><th>Date</th><th>Time</th><th>hospitalID</th>"
 						+ "<th>patientID</th><th>doctorID</th><th>paymentID </th><th>Status</th></tr>";
 				String query = "SELECT * from `appointment` where appointmentID="+appointmentID;
 				
@@ -143,6 +150,12 @@ public class Appointment {
 					output += "<td>" + doctorID + "</td>";
 					output += "<td>" + paymentID + "</td>";
 					output += "<td>" + Status + "</td>";
+					
+					output += "<td><input name=\"btnUpdate\" type=\"button\"value=\"Update\" class=\"btn btn-warning btnUpdate\"></td>"
+							+ "<td><form method=\"post\" action=\"Appointment.jsp\">"
+							+ "<input name=\"btnRemove\" type=\"submit\" value=\"Remove\"class=\"btn btn-danger\" id=\"btnRemove\">"
+							+ "<input name=\"hidAppointmentIDDelete\" type=\"hidden\" value=\"" + AppID + "\">"
+							+ "</form></td></tr>";
 				}
 
 				con.close();
@@ -158,14 +171,14 @@ public class Appointment {
 	
 	
 	// update Appointment
-	public String updateAppoinment(String appointmentID, String date, String time, String hospitalID, String patientID, String doctorID, String paymentID, String appointmentStatus, String refundID) {
+	public String updateAppoinment(String appointmentID, String date, String time, String hospitalID, String patientID, String doctorID, String paymentID, String appointmentStatus) {
 		String output = "";
 		try {
 			Connection con = connect();
 			if (con == null) {
 				return "Error while connecting to the database for updating.";
 			}
-			String query = "UPDATE appointment SET date = ? ,time=?,hospitalID=?,patientID=?,doctorID=?,paymentID=?,refundID=?,appointmentStatus=? WHERE appointmentID=?";
+			String query = "UPDATE appointment SET date = ? ,time=?,hospitalID=?,patientID=?,doctorID=?,paymentID=?,appointmentStatus=? WHERE appointmentID=?";
 			PreparedStatement preparedStmt = con.prepareStatement(query);
 
 			// binding values
@@ -175,14 +188,18 @@ public class Appointment {
 			preparedStmt.setInt(4, Integer.parseInt(patientID));
 			preparedStmt.setInt(5, Integer.parseInt(doctorID));
 			preparedStmt.setInt(6, Integer.parseInt(paymentID));
-			preparedStmt.setInt(7, Integer.parseInt(refundID));
-			preparedStmt.setString(8,appointmentStatus);
-			preparedStmt.setInt(9, Integer.parseInt(appointmentID));
+			preparedStmt.setString(7,appointmentStatus);
+			preparedStmt.setInt(8, Integer.parseInt(appointmentID));
 			preparedStmt.execute();
 			con.close();
-			output = "Updated successfully";
+			
+			//Added with DC - Engine 
+			String newApp = GetAllAppoinments();
+			output = "{\"status\":\"success\",\"data\": \"" + newApp +"\"}";
+			//output = "Updated successfully";
 		} catch (Exception e) {
-			output = "Error while Updating the item.";
+		//	output = "Error while Updating the item.";
+			output = "{\"status\":\"error\",\"data\": \"Error wile updating appointment\"}";
 			System.err.println(e.getMessage());
 		}
 		return output;
@@ -201,9 +218,14 @@ public class Appointment {
 			preparedStmt.setInt(1, Integer.parseInt(appointmentID)); 
 			preparedStmt.execute();
 			con.close();
-			output = "Deleted successfully";
+			
+			//Added with DC - Engine 
+			String newApp = GetAllAppoinments();
+			output = "{\"status\":\"success\",\"data\": \"" + newApp +"\"}";
+			//	output = "Deleted successfully";
 		} catch (Exception e) {
-			output = "Error while deleting the Appointment.";
+		//	output = "Error while deleting the Appointment.";
+			output = "{\"status\":\"error\",\"data\": \"Error while deleteing Appointment\"}";
 			System.err.println(e.getMessage());
 		}
 		return output;
