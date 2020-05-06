@@ -43,7 +43,6 @@ $(document).on("click","#new_btn",function(event){
 	$("#alertError").hide();
 });
 
-
 // SAVE ============================================
 $(document).on("click", "#btnSave", function(event) {
 	// Clear alerts---------------------

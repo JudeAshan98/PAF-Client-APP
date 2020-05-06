@@ -76,7 +76,7 @@ public class LoginAPI extends HttpServlet {
 					int usrID = rs.getInt(1);
 					String Uname = rs.getString(3);
 					System.out.println("Id : " + usrID);
-					out.print("<div id='profile'> " +  " &nbsp Welcome, " + Uname +"   <button id='logout' name='logout' style='color:red;float:right'>Logout</button></div>");
+					out.print("<div id='profile'> " +  " &nbsp Welcome, " + Uname +"  <a href='Logout'> <button id='logout' name='logout' style='color:red;float:right'>Logout</button></a></div>");
 					HttpSession session = request.getSession();
 					session.setAttribute("name", name);
 					session.setAttribute("role", role);
@@ -97,7 +97,7 @@ public class LoginAPI extends HttpServlet {
 						int usrID = rs1.getInt(1);
 						System.out.println("Id : " + usrID);
 												
-						out.print("Welcome, " + name +"<button id='logout' name='logout' style='color:red;float:right'>Logout</button>");
+						out.print("<div id='profile'> " +  " &nbsp Welcome, " + name +" <a href='Logout'>  <button id='logout' name='logout' style='color:red;float:right'>Logout</button></a></div>");
 						role = "admin";
 						
 						HttpSession session = request.getSession();
@@ -113,12 +113,13 @@ public class LoginAPI extends HttpServlet {
 					stm2.setString(1, name);
 					stm2.setString(2, password);
 					ResultSet rs2 = stm2.executeQuery();
-					String Uname = rs2.getString(4);
+					
 					if (rs2.next()) {
 						if (name.equals(name) && password.equals(password)) {
 							int usrID = rs2.getInt(1);
 							System.out.println("Id : " + usrID);
-							out.print("Welcome, " + Uname+"  <button id='logout' name='logout' style='color:red';float:right>Logout</button>");
+							String Uname = rs2.getString(4);
+							out.print("<div id='profile'> " +  " &nbsp Welcome, " + Uname +" <a href='Logout'>  <button id='logout' name='logout' style='color:red;float:right'>Logout</button></a></div>");
 							role = "doctor";
 							HttpSession session = request.getSession();
 							session.setAttribute("name", name);
