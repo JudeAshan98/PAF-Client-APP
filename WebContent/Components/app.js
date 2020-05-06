@@ -7,11 +7,43 @@ $(document).ready(function() {
 
 	$("#bottom_hide").hide();
 	$("#app_id").hide();
+	
+	if ($("#role").text().trim()=="admin"){
+		$('#formApp input').attr('readonly', 'readonly');
+		$('#formApp select').attr("disabled", true); 
+		$('#btnSave').hide();
+		$('#new_btn').hide();
+		$("#patientID").val()=="";
+
+	}
+	else if ($("#role").text().trim()=="doctor"){
+		$('#formApp input').attr('readonly', 'readonly');
+		$('#formApp select').attr("disabled", true); 
+		$('#btnSave').hide();
+		$('#new_btn').hide();
+		$('.btnRemove').hide();
+	}
+	
 });
+
+function hideElemts(){
+	$("#AppointmentID").val("");
+	$("#formApp")[0].reset();
+	$("#bottom_hide").hide();
+	$("#app_id").hide();
+};
+
+//New Button=======================================
+$(document).on("click","#new_btn",function(event){
+	
+	hideElemts();
+});
+
 
 // SAVE ============================================
 $(document).on("click", "#btnSave", function(event) {
 	// Clear alerts---------------------
+	
 	$("#alertSuccess").text("");
 	$("#alertSuccess").hide();
 	$("#alertError").text("");
@@ -73,6 +105,13 @@ $(document).on("click", ".btnUpdate", function(event) {
 	$("#app_id").show();
 	$("#bottom_hide").show();
 	$("#AppointmentID").prop('readonly', true);
+	if ($("#role").text().trim()=="admin"){
+		$('#formApp input').attr('readonly', false);
+		$('#btnSave').show();
+		$("#AppointmentID").prop('readonly', true);
+		$('#formApp select').attr("disabled", false); 
+	}
+	
 	// $("#refundID").val(1);
 	$("#AppointmentID").val($(this).closest("tr").find('#hidAppointmentID').val());
 	// $("#AppointmentID").val($(this).closest("tr").find('td:eq(0)').text());

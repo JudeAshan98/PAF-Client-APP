@@ -91,7 +91,7 @@ public class Appointment {
 				String paymentID = Integer.toString(rs.getInt("paymentID"));
 				String Status = rs.getString("appointmentStatus");
 
-				output += "<tr><td><input type='text' id='hidAppointmentID' name='hidAppointmentID' value='" + AppointmentID +"' readonly>"+ "</td>";
+				output += "<tr><td><input type='text' style='border: none;border-color: transparent;background-color: transparent;' id='hidAppointmentID' name='hidAppointmentID' value='" + AppointmentID +"' readonly>"+ "</td>";
 				output += "<td>" + date + "</td>";
 				output += "<td>" + time + "</td>";
 				output += "<td>" + hospitalID + "</td>";

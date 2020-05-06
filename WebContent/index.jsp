@@ -4,6 +4,7 @@
 <%@page import="java.sql.Connection"%>
 <%@page import="java.sql.Statement"%>
 <%@page import="com.mysql.cj.ParseInfo"%>
+<%@page import="com.DBconnection" %>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
@@ -11,17 +12,26 @@
 <head>
 <meta charset="ISO-8859-1">
 <%@ page import="com.Appointment"%>
-
+<% Integer userid = (Integer) session.getAttribute("usrID"); %>
+				<% String role = (String) session.getAttribute("role"); %>
 <%
 	Class.forName("com.mysql.jdbc.Driver");
-java.sql.Connection connection = DriverManager.getConnection(
-		"jdbc:mysql://localhost:3306/pafdb?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC",
-		"root", "");
+// java.sql.Connection connection = DriverManager.getConnection(
+// 		"jdbc:mysql://localhost:3306/pafdb?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC",
+// 		"root", "");
+	DBconnection con = new DBconnection();
 
-String query = "select * from hospital";
-
+	Connection connection = con.connect();	
+	
+String query = "SELECT hospitalID , hospitalname from hospital ";
+String query1 = "SELECT * from doctor";
 Statement stmt = connection.createStatement();
+
 ResultSet rs = stmt.executeQuery(query);
+
+Statement stmt1 = connection.createStatement();
+ResultSet rs1 = stmt1.executeQuery(query1);
+
 %>
 <title>Appointment</title>
 
@@ -56,6 +66,10 @@ ResultSet rs = stmt.executeQuery(query);
 				<br />
 				<h2 class="m-3">Online Appointment</h2>
 				<br />
+				
+				<p id="role" hidden><%=role %></p>
+<%-- 				<input type="hidden" id="userid" name="userid"><%=userid%> --%>
+<%-- 				<input type="hidden" id="role" name="role"><%=role%> --%>
 				<form id="formApp" name="formApp">
 					<div id="app_id">
 						<label for="date">Appointment ID:</label> <input type="text"
@@ -89,13 +103,13 @@ ResultSet rs = stmt.executeQuery(query);
 						<div class="form-group col-md-6">
 							<label for="itemDesc">Doctor: </label> <select
 								class="form-control select2" name="doctorID" id="doctorID">
-								<option value="1">Doc</option>
-								<%-- 			 			<%  --%>
-								<!-- // 			           	while(rs.next()){  -->
-								<!-- 			           %> -->
-								<%-- 			           <option value="<%=rs.getString(1)%>"><%=rs.getString(2)%></option>  --%>
-								<%-- 			            <% } %> --%>
-
+								<%
+									while (rs1.next()) {
+								%>
+								<option value="<%=rs1.getString(1)%>"><%=rs1.getString(4)%>  <%=rs1.getString(5)%></option>
+								<%
+									}
+								%>
 							</select>
 						</div>
 					</div>
@@ -103,32 +117,29 @@ ResultSet rs = stmt.executeQuery(query);
 					<div hidden="">
 						<label for="patientID">patient ID:</label> <input id="patientID"
 							name="patientID" type="text" class="form-control form-control-sm"
-							value="1"><br>
+							value="<%=userid%>"><br>
 					</div>
 
 					<input type="hidden" id="hidAppIDSave" name="hidAppIDSave"
 						value="89">
-					<!-- 						<div class="form-group col-md-6"> -->
-					<!-- 							<label for="appointmentStatus">Appointment Status:</label> <input -->
-					<!-- 								type="text" id="appointmentStatus" name="appointmentStatus" -->
-					<!-- 								value="" class="form-control form-control-sm"><br /> -->
-					<!-- 						</div> -->
-					<div class="form-row" id="bottom_hide">
-						<div class="form-group col-md-6">
+						<div class="form-row" id="bottom_hide">
+						<div class="form-group col-md-12">
 							<label for="appointmentStatus"></label>Payment ID: <input
 								type="text" id="appointmentStatus" name="appointmentStatus"
 								value="" class="form-control form-control-sm"><br />
 						</div>
-						<div class="form-group col-md-6">
+						<div class="form-group col-md-12">
 							<label for="paymentID"></label>Appointment Status: <input type="text"
 								id="paymentID" name="paymentID" value=""
 								class="form-control form-control-sm"><br />
 						</div>
 					</div>
-
+					
+					<br/><br/>
+					<hr/>
 					<input id="btnSave" name="btnSave" type="button" value="Save*"
-						class="btn btn-success"> <input id="new_btn"
-						name="new_btn" type="reset" value="New*" class="btn btn-info">
+						class="btn btn-success"> 
+						<input id="new_btn"	name="new_btn" type="button" value="New*" class="btn btn-info">
 				</form>
 				<br />
 
