@@ -74,8 +74,9 @@ public class LoginAPI extends HttpServlet {
 					// out.print("Welcome, " + name);
 					role = "patient";
 					int usrID = rs.getInt(1);
+					String Uname = rs.getString(3);
 					System.out.println("Id : " + usrID);
-					
+					out.print("<div id='profile'> " +  " &nbsp Welcome, " + Uname +"   <button id='logout' name='logout' style='color:red;float:right'>Logout</button></div>");
 					HttpSession session = request.getSession();
 					session.setAttribute("name", name);
 					session.setAttribute("role", role);
@@ -96,7 +97,7 @@ public class LoginAPI extends HttpServlet {
 						int usrID = rs1.getInt(1);
 						System.out.println("Id : " + usrID);
 												
-						out.print("Welcome, " + name);
+						out.print("Welcome, " + name +"<button id='logout' name='logout' style='color:red;float:right'>Logout</button>");
 						role = "admin";
 						
 						HttpSession session = request.getSession();
@@ -112,12 +113,12 @@ public class LoginAPI extends HttpServlet {
 					stm2.setString(1, name);
 					stm2.setString(2, password);
 					ResultSet rs2 = stm2.executeQuery();
-
+					String Uname = rs2.getString(4);
 					if (rs2.next()) {
 						if (name.equals(name) && password.equals(password)) {
 							int usrID = rs2.getInt(1);
 							System.out.println("Id : " + usrID);
-							
+							out.print("Welcome, " + Uname+"  <button id='logout' name='logout' style='color:red';float:right>Logout</button>");
 							role = "doctor";
 							HttpSession session = request.getSession();
 							session.setAttribute("name", name);

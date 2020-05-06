@@ -1,9 +1,9 @@
 $(document).ready(function() {
-	//if ($("#alertSuccess").text().trim() == "") {
+	if ($("#alertSuccess").text().trim() == "") {
 		$("#alertSuccess").hide();
-	//}
+	}
 	$("#alertError").hide();
-	// $("#paymentID").hide();
+//	 $("#paymentID").hide();
 
 	$("#bottom_hide").hide();
 	$("#app_id").hide();
@@ -37,6 +37,10 @@ function hideElemts(){
 $(document).on("click","#new_btn",function(event){
 	
 	hideElemts();
+	$("#alertSuccess").text("");
+	$("#alertSuccess").hide();
+	$("#alertError").text("");
+	$("#alertError").hide();
 });
 
 

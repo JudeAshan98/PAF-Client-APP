@@ -59,8 +59,9 @@ ResultSet rs1 = stmt1.executeQuery(query1);
 }
 </style>
 </head>
-<body>
+<body><div style="max-height:20px; background-color:black; with:100%;margin-top:10px"> &nbsp </div>
 	<div class="container">
+	
 		<div class="row">
 			<div class="col-8">
 				<br />
@@ -136,7 +137,7 @@ ResultSet rs1 = stmt1.executeQuery(query1);
 					</div>
 					
 					<br/><br/>
-					<hr/>
+					
 					<input id="btnSave" name="btnSave" type="button" value="Save*"
 						class="btn btn-success"> 
 						<input id="new_btn"	name="new_btn" type="button" value="New*" class="btn btn-info">
